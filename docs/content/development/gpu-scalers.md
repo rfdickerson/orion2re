@@ -35,6 +35,13 @@ failure if unavailable; `ORION2RE_RENDERER=sdl` selects the existing backend.
 `ORION2RE_VULKAN_VALIDATION=1` requests Vulkan validation for the SDL GPU device.
 Software Vulkan devices are excluded unless `ORION2RE_VULKAN_ALLOW_SOFTWARE` is set.
 
+After a successful VSync update, logs identify the GPU backend and the present
+mode selected by the pinned SDL renderer: enabled VSync selects FIFO; disabled
+VSync prefers Mailbox, then Immediate, then FIFO. The mode is explicitly labeled
+as SDL's selection policy because SDL has no public active-mode getter. Failed
+updates produce a warning rather than a success message. The existing SDL path
+logs its renderer name and VSync setting.
+
 The existing `interface scaler` setting selects pixelart, bilinear, HQ2x, HQ3x,
 HQ4x, MMPX2, or MMPX4. GPU HQx and MMPX output preserves the CPU algorithms;
 MMPX4 uses two 2× passes. Pixelart and bilinear present the palette-converted

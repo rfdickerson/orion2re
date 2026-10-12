@@ -482,8 +482,40 @@ namespace platform {
             const int8_t vsync_enabled =
                 SDL_GetAtomicInt(&g_requested_vsync_enabled) != 0 ? 1 : 0;
             if (g_applied_vsync_enabled != vsync_enabled) {
-                (void)SDL_SetRenderVSync(g_sdl_renderer, vsync_enabled);
+                const bool applied = SDL_SetRenderVSync(g_sdl_renderer, vsync_enabled);
                 g_applied_vsync_enabled = vsync_enabled;
+                if (!applied) {
+                    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION,
+                        "Presentation VSync update failed (requested=%d): %s",
+                        vsync_enabled,
+                        SDL_GetError());
+                } else {
+#if defined(ORION2RE_ENABLE_VULKAN)
+                    if (g_vulkan_device != nullptr) {
+                        // Match ChoosePresentMode in the pinned SDL GPU renderer.
+                        // SDL has no public getter for the active swapchain present mode.
+                        const char* present_mode = "FIFO";
+                        if (vsync_enabled == 0) {
+                            if (SDL_WindowSupportsGPUPresentMode(g_vulkan_device, g_sdl_window, SDL_GPU_PRESENTMODE_MAILBOX)) {
+                                present_mode = "MAILBOX";
+                            } else if (SDL_WindowSupportsGPUPresentMode(g_vulkan_device, g_sdl_window, SDL_GPU_PRESENTMODE_IMMEDIATE)) {
+                                present_mode = "IMMEDIATE";
+                            }
+                        }
+                        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                            "Presentation: GPU backend=%s, present mode=%s (SDL selection policy), vsync_enabled=%d",
+                            SDL_GetGPUDeviceDriver(g_vulkan_device),
+                            present_mode,
+                            vsync_enabled);
+                    } else
+#endif
+                    {
+                        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,
+                            "Presentation: SDL renderer=%s, vsync_enabled=%d",
+                            SDL_GetRendererName(g_sdl_renderer),
+                            vsync_enabled);
+                    }
+                }
             }
 
             SDL_RenderClear(g_sdl_renderer);
