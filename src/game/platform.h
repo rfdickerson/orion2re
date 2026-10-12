@@ -57,6 +57,8 @@ namespace platform {
 
     extern int8_t g_render_buffer;
 
+    extern uint16_t g_window_width;
+    extern uint16_t g_window_height;
     extern uint8_t g_vsync_enabled;
     extern e_present_scaler g_present_scaler;
 

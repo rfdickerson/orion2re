@@ -8221,3 +8221,36 @@ DOCTEST_TEST_SUITE("generated configuration bindings") {
                           "router.example.com:47800") == 0);
     }
 }
+DOCTEST_TEST_CASE("presentation window dimensions are local bounded startup settings") {
+    for (const char* path : {"interface.window_width", "interface.window_height"}) {
+        const config::t_variable_id variable = Variable_Id_(path);
+        DOCTEST_REQUIRE(variable != config::CONFIG_NO_VARIABLE);
+        const config::s_config_group_descriptor* group =
+            config::Get_Config_Group(config::Get_Variable_Group(variable));
+        DOCTEST_REQUIRE(group != nullptr);
+        DOCTEST_CHECK_FALSE(group->save);
+        DOCTEST_CHECK_FALSE(group->synchronize);
+    }
+    config::s_config_state state;
+    DOCTEST_REQUIRE(config::Initialize_Defaults(&state));
+    DOCTEST_REQUIRE(config::Commit_State(&state));
+    DOCTEST_CHECK(platform::g_window_width == 640);
+    DOCTEST_CHECK(platform::g_window_height == 480);
+
+    config::s_config_write_set writes;
+    config::s_cfg_diagnostic diagnostic;
+    DOCTEST_REQUIRE(Append_Decoded_(
+        "interface window_width = 2560; interface window_height = 1440;", &writes, &diagnostic));
+    DOCTEST_REQUIRE(config::Apply_Write_Set(&writes, &state, &diagnostic));
+    DOCTEST_REQUIRE(config::Commit_State(&state));
+    DOCTEST_CHECK(platform::g_window_width == 2560);
+    DOCTEST_CHECK(platform::g_window_height == 1440);
+
+    for (const char* invalid : {
+             "interface window_width = 319;", "interface window_height = 239;", "interface window_width = 8193;", "interface window_height = 8193;", "interface window_width = -1;", "interface window_height = 0;"}) {
+        writes.writes.clear();
+        DOCTEST_CHECK_FALSE(Append_Decoded_(invalid, &writes, &diagnostic));
+    }
+    DOCTEST_REQUIRE(config::Initialize_Defaults(&state));
+    DOCTEST_REQUIRE(config::Commit_State(&state));
+}

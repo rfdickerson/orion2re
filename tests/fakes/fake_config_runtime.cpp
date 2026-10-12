@@ -133,6 +133,8 @@ namespace COLBLDG {
 }
 
 namespace platform {
+    uint16_t g_window_width = 640;
+    uint16_t g_window_height = 480;
     uint8_t g_vsync_enabled = 1;
     e_present_scaler g_present_scaler = PRESENT_SCALER_PIXELART;
 } // namespace platform

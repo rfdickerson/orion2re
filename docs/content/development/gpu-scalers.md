@@ -47,6 +47,22 @@ HQ4x, MMPX2, or MMPX4. GPU HQx and MMPX output preserves the CPU algorithms;
 MMPX4 uses two 2× passes. Pixelart and bilinear present the palette-converted
 frame directly, using nearest and linear sampling respectively.
 
+## Fixed window resolution
+
+Set the presentation window size in `data/orion2re.cfg`, then restart:
+
+```text
+interface window_width = 2560;
+interface window_height = 1440;
+```
+
+The default remains 640×480. Width accepts 320–8192 pixels and height accepts
+240–8192 pixels. Manual resizing is disabled. These settings apply to both SDL
+and Vulkan; the original logical framebuffer and 4:3 aspect ratio are preserved,
+with letterboxing where needed. Window dimensions are local interface settings,
+excluded from saved games and multiplayer synchronization. Desktop scaling and
+window-manager constraints can affect the resulting drawable size.
+
 ## Indexed uploads and synchronization
 
 The game uploads the indexed frame, its 256-color palette, and a 24×24 cursor.

@@ -4033,6 +4033,32 @@
       },
     },
 
+    window_width: {
+      title: "Presentation window width",
+      description: "Sets the fixed presentation window width in pixels.",
+      remarks: "Takes effect on startup. The logical framebuffer remains 640x480 and is letterboxed to preserve its aspect ratio. Manual window resizing is disabled. Local to each peer and excluded from saves and synchronization.",
+      examples: ["interface window_width = 2560;"],
+      group: "interface",
+      namespace: "interface",
+      type: "uint16",
+      constraints: { min: 320, max: 8192 },
+      default: 640,
+      bind_root: { header: "game/platform.h", symbol: "platform::g_window_width" },
+    },
+
+    window_height: {
+      title: "Presentation window height",
+      description: "Sets the fixed presentation window height in pixels.",
+      remarks: "Takes effect on startup. The logical framebuffer remains 640x480 and is letterboxed to preserve its aspect ratio. Manual window resizing is disabled. Local to each peer and excluded from saves and synchronization.",
+      examples: ["interface window_height = 1440;"],
+      group: "interface",
+      namespace: "interface",
+      type: "uint16",
+      constraints: { min: 240, max: 8192 },
+      default: 480,
+      bind_root: { header: "game/platform.h", symbol: "platform::g_window_height" },
+    },
+
     vsync_enabled: {
       title: "Vertical synchronization",
       description: "Synchronizes rendered frames with the display refresh rate.",

@@ -1141,6 +1141,8 @@ namespace platform {
     uint8_t* cursor_surface;
     uint32_t g_frame_count;
     int8_t g_render_buffer;
+    uint16_t g_window_width = 640;
+    uint16_t g_window_height = 480;
     uint8_t g_vsync_enabled = 1;
     e_present_scaler g_present_scaler = PRESENT_SCALER_PIXELART;
     uint8_t* offscreen_surface;
@@ -1677,15 +1679,16 @@ namespace platform {
         }
 
 #ifdef FULLSCREEN
-        int nWidth = k_windowed_logical_width;
-        int nHeight = k_windowed_logical_height;
+        int nWidth = g_window_width;
+        int nHeight = g_window_height;
         SDL_WindowFlags window_flags = SDL_WINDOW_FULLSCREEN | SDL_WINDOW_HIDDEN;
 #else
-        int nWidth = k_windowed_logical_width;
-        int nHeight = k_windowed_logical_height;
-        SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
+        int nWidth = g_window_width;
+        int nHeight = g_window_height;
+        SDL_WindowFlags window_flags = SDL_WINDOW_HIDDEN;
 #endif
 
+        SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Presentation window: %dx%d, resizing disabled", nWidth, nHeight);
         g_sdl_window = SDL_CreateWindow("Orion2 Redone", nWidth, nHeight, window_flags);
         if (g_sdl_window == nullptr) {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "platform: SDL_CreateWindow failed: %s", SDL_GetError());
